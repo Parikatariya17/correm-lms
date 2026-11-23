@@ -1,17 +1,21 @@
 import { v2 as cloudinary } from 'cloudinary';
 import { Readable } from 'stream';
 
-cloudinary.config({
-  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
-  api_key: process.env.CLOUDINARY_API_KEY,
-  api_secret: process.env.CLOUDINARY_API_SECRET,
-});
+const configureCloudinary = () => {
+  cloudinary.config({
+    cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+    api_key: process.env.CLOUDINARY_API_KEY,
+    api_secret: process.env.CLOUDINARY_API_SECRET,
+  });
+};
 
 export const uploadBufferToCloudinary = (
   fileBuffer,
   folder = 'lms_documents',
   originalName = 'document'
 ) => {
+  configureCloudinary();
+
   return new Promise((resolve, reject) => {
     const sanitizedName = originalName
       .replace(/\.[^/.]+$/, '')
@@ -38,6 +42,7 @@ export const uploadBufferToCloudinary = (
 
 export const deleteFromCloudinary = async (publicId) => {
   if (!publicId) return null;
+  configureCloudinary();
   return cloudinary.uploader.destroy(publicId);
 };
 
